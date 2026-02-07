@@ -26,7 +26,7 @@ const ThemeToggle = () => {
 
   return (
     <div className="flex bg-base-200 rounded-lg p-1 w-max">
-      {["light", "dark", "system"].map((t) => (
+      {["mylight", "mytheme", ].map((t) => (
         <button
           key={t}
           onClick={() => applyTheme(t)}
