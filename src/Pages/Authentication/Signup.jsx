@@ -1,203 +1,154 @@
 import { useForm } from "react-hook-form";
-import { useState } from "react";
-import { FaEye, FaEyeSlash, FaMailBulk } from "react-icons/fa";
-import { FaUser } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import Logo from "../../assets/logo/logo";
+import dance from "../../assets/images/dance.svg";
+import dance1 from "../../assets/images/danceMove.svg";
+import google from "../../assets/icons/google.svg";
+import facebook from "../../assets/icons/facebook.svg";
+import apple from "../../assets/icons/apple.svg";
+import ThemeToggle from "../../components/common/ThemeToggle";
 
-const Signup = () => {
+const SignIn = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const [showPassword, setShowPassword] = useState(false);
-
-  const togglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev);
-  };
 
   const onSubmit = (data) => {
-    console.log("Form Data:", data);
-    // Perform signup API call here
-    // After successful signup, redirect to OTP route
-    window.location.href = "/otp";
+    console.log(data);
   };
 
   return (
-    <div className="grid grid-cols-7 min-h-screen bg-base-200">
-      {/* Left Side */}
-      <div className="col-span-3 bg-blue-500 flex items-center p-8">
-        <h2 className="text-white text-4xl font-bold leading-relaxed">
-          Welcome Back! Verify Your <br /> Email to Access Your <br /> Learning
-          Portal!
-        </h2>
+    <div className="min-h-screen bg-base-200 flex items-center justify-center p-4 relative">
+      {/* Theme Toggle */}
+      <div className="absolute right-4 top-5">
+        <ThemeToggle />
       </div>
 
-      {/* Right Side */}
-      <div className="col-span-4 flex items-center justify-center ">
-        <div className="max-w-lg w-full bg-white rounded-3xl border border-blue-200 shadow-md p-16">
-          <h2 className="text-2xl font-bold text-center mb-2">
-            Sign Up Account
+      <div className="w-full max-w-6xl flex items-center justify-between gap-20">
+        {/* Left Illustration */}
+        <div className="hidden lg:block flex-1 pb-36">
+          <img
+            src={dance}
+            alt="Illustration of a dancing figure"
+            className="w-full h-auto select-none pointer-events-none"
+          />
+        </div>
+
+        {/* Form */}
+        <div className="w-full max-w-md">
+          <div className="flex justify-center mb-3">
+            <Logo />
+          </div>
+          <h2 className="text-primary text-center font-semibold text-lg mb-7">
+            Artistry Coach
           </h2>
-          <p className="text-center text-sm mb-6">
-            Already have an Account?{" "}
-            <Link to="/signup" className="text-blue-500 hover:underline">
-              Sign In
-            </Link>
+          <h1 className="text-2xl font-extrabold text-center text-base-content mb-1">
+            Sign In
+          </h1>
+          <p className="text-center text-base-content/60 text-sm mb-8">
+            Sign in with your account to get started
           </p>
 
-          {/* Form */}
+          {/* Form Inputs */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  First name
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    {...register("firstName", {
-                      required: "First is required",
-                    })}
-                    placeholder="first name"
-                    className="w-full border border-base-300 bg-base-200 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <FaUser className="absolute inset-y-3 right-3 flex items-center text-gray-500" />
-                </div>
-                {errors.username && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.username.message}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Last name
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    {...register("lastName", {
-                      required: "Last is required",
-                    })}
-                    placeholder="Last name"
-                    className="w-full border border-base-300 bg-base-200 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <FaUser className="absolute inset-y-3 right-3 flex items-center text-gray-500" />
-                </div>
-                {errors.username && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.username.message}
-                  </p>
-                )}
-              </div>
-            </div>
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Email or Phone Number
+              <label htmlFor="email" className="sr-only">
+                Email
               </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  {...register("email", {
-                    required: "Email or phone number is required",
-                  })}
-                  placeholder="Email or Phone Number"
-                  className="w-full border border-base-300 bg-base-200 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <FaMailBulk className="absolute inset-y-3 right-3 flex items-center text-gray-500" />
-              </div>
-              {errors.username && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.username.message}
+              <input
+                id="email"
+                type="email"
+                placeholder="Email"
+                {...register("email", { required: "Email is required" })}
+                className="w-full px-4 py-3 bg-base-100 shadow rounded-md outline-none text-sm text-base-content"
+                autoComplete="email"
+              />
+              {errors.email && (
+                <p className="text-error text-xs mt-1">
+                  {errors.email.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Password</label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  {...register("password", {
-                    required: "Password is required",
-                  })}
-                  placeholder="Enter your Password"
-                  className="w-full border border-base-300 bg-base-200 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                  className="absolute inset-y-0 right-3 flex items-center text-gray-500"
-                >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </button>
-              </div>
+              <label htmlFor="password" className="sr-only">
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                placeholder="Password"
+                {...register("password", { required: "Password is required" })}
+                className="w-full px-4 py-3 bg-base-100 shadow rounded-md outline-none text-sm text-base-content"
+                autoComplete="current-password"
+              />
               {errors.password && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="text-error text-xs mt-1">
                   {errors.password.message}
                 </p>
               )}
-
-              <div className="flex justify-between items-center mt-2 text-sm">
-                <div className="flex items-center opacity-75">
-                  <input
-                    type="checkbox"
-                    {...register("remember")}
-                    className="mr-2"
-                  />
-                  I agree to the{" "}
-                  <Link
-                    to="/terms"
-                    className="text-blue-500 ps-1 hover:underline"
-                  >
-                    Terms and Conditions
-                  </Link>
-                </div>
-              </div>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-md"
+              className="w-full btn btn-primary text-base-100 py-3 rounded-md font-medium hover:scale-102 transition-transform duration-300"
             >
-              Sign Up
+              Continue
             </button>
           </form>
 
           {/* Divider */}
-          <div className="divider">Or Sign Up with</div>
-          {/* Social SignUp */}
-          <div className="flex space-x-4">
-            <button className="flex-1 flex items-center justify-center border border-base-300 rounded-md py-2 hover:bg-gray-100">
-              <img
-                src="https://www.svgrepo.com/show/475656/google-color.svg"
-                alt="Google"
-                className="w-5 h-5 mr-2"
-              />
-              Google
-            </button>
-            <button className="flex-1 flex items-center justify-center border border-base-300 rounded-md py-2 hover:bg-gray-100">
-              <img
-                src="https://www.svgrepo.com/show/452196/facebook-1.svg"
-                alt="Facebook"
-                className="w-5 h-5 mr-2"
-              />
-              Facebook
-            </button>
+          <div className="flex items-center my-6">
+            <div className="flex-1 border-t border-base-content/20"></div>
+            <span className="px-4 text-base-content/60 text-sm">OR</span>
+            <div className="flex-1 border-t border-base-content/20"></div>
           </div>
 
-          
-          <p className="text-center text-sm mt-6">
-            Already have an account?{" "}
-            <Link to="/signin" className="text-blue-500 hover:underline">
-              Sign In
-            </Link>
+          {/* Social Login */}
+          <div className="flex flex-col gap-3">
+            {[{ icon: google, label: "Google" }, { icon: facebook, label: "Facebook" }, { icon: apple, label: "Apple" }].map((s) => (
+              <button
+                key={s.label}
+                type="button"
+                className="w-full flex items-center justify-center gap-3 px-4 py-2 bg-base-100 shadow rounded-md hover:shadow-lg transition-shadow duration-300"
+                aria-label={`Sign in with ${s.label}`}
+              >
+                <img
+                  src={s.icon}
+                  alt={`${s.label} logo`}
+                  className="w-5 h-5 select-none pointer-events-none"
+                />
+                <span className="text-base-content font-medium text-sm">
+                  {s.label}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {/* Sign Up Link */}
+          <p className="text-center text-sm text-base-content/60 mt-6">
+            Don&apos;t have an account yet?{" "}
+            <a
+              href="/signup"
+              className="text-primary font-semibold hover:underline"
+            >
+              Sign Up
+            </a>
           </p>
+        </div>
+
+        {/* Right Illustration */}
+        <div className="hidden lg:block flex-1 pt-36">
+          <img
+            src={dance1}
+            alt="Illustration of a dancing figure in motion"
+            className="w-2/3 h-auto select-none pointer-events-none"
+          />
         </div>
       </div>
     </div>
   );
 };
 
-export default Signup;
+export default SignIn;
