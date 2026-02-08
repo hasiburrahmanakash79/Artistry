@@ -1,12 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import logo from "../../assets/logo/logo.png";
-import { Edit, PlusIcon, SendIcon } from "lucide-react";
-import { Logout, Panel } from "../../assets/icons/icons";
+import { Edit, PanelLeft, PlusIcon, SendIcon } from "lucide-react";
+import { Logout } from "../../assets/icons/icons"; 
 import ThemeToggle from "../../components/common/ThemeToggle";
+import LogoutModal from "../../components/modal/LogoutModal";
+import { useNavigate } from "react-router-dom";
 
 const ChatInbox = () => {
+  const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [chats, setChats] = useState([
     {
       id: 1,
@@ -71,8 +75,8 @@ const ChatInbox = () => {
 
     setChats((prev) =>
       prev.map((c) =>
-        c.id === currentChatId ? { ...c, messages: newMessages } : c
-      )
+        c.id === currentChatId ? { ...c, messages: newMessages } : c,
+      ),
     );
 
     // Update chat title if it's still "New Chat"
@@ -86,8 +90,8 @@ const ChatInbox = () => {
                   userMessage.slice(0, 35) +
                   (userMessage.length > 35 ? "..." : ""),
               }
-            : c
-        )
+            : c,
+        ),
       );
     }
 
@@ -102,10 +106,13 @@ const ChatInbox = () => {
           c.id === currentChatId
             ? {
                 ...c,
-                messages: [...newMessages, { role: "assistant", content: aiReply }],
+                messages: [
+                  ...newMessages,
+                  { role: "assistant", content: aiReply },
+                ],
               }
-            : c
-        )
+            : c,
+        ),
       );
       setIsLoading(false);
     }, 1200);
@@ -118,21 +125,33 @@ const ChatInbox = () => {
     }
   };
 
+  const handleLogout = () => {
+    // Implement actual logout logic here, e.g., clear auth tokens, redirect to login page
+    console.log("Logging out...");
+    navigate('/signin')
+  };
+
   return (
     <div className="flex h-screen bg-base-200">
       {/* Sidebar */}
       <div
         className={`${
           isSidebarOpen ? "w-64" : "w-0"
-        } bg-base-100 border-r border-base-300 flex flex-col  overflow-hidden`}
+        } bg-base-100  flex flex-col  overflow-hidden`}
       >
         {/* Logo */}
-        <div className="p-4 flex items-center justify-between border-b border-base-300">
+        <div className="p-4 flex items-center justify-between">
           <div className="w-10 h-10">
-            <img src={logo} alt="Logo" className="w-full h-full object-contain" />
+            <img
+              src={logo}
+              alt="Logo"
+              className="w-full h-full object-contain"
+            />
           </div>
           <button onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-            <Panel className="w-5 h-5 text-base-content" />
+            <div className="w-10 h-10 bg-primary flex items-center justify-center rounded-full">
+              <PanelLeft className="w-5 h-5 text-base-content" />
+            </div>
           </button>
         </div>
 
@@ -140,7 +159,7 @@ const ChatInbox = () => {
         <div className="p-3">
           <button
             onClick={handleNewChat}
-            className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl hover:bg-base-200 text-base-content transition-colors"
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-base-300 text-base-content "
           >
             <Edit className="w-4 h-4" />
             <span className="font-medium">New Chat</span>
@@ -157,7 +176,7 @@ const ChatInbox = () => {
               <button
                 key={chat.id}
                 onClick={() => handleSelectChat(chat.id)}
-                className={`w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-base-200 text-base-content transition-all`}
+                className={`w-full text-left px-3 py-2.5 rounded-lg text-sm hover:bg-base-300 text-base-content`}
               >
                 {chat.title}
               </button>
@@ -173,9 +192,12 @@ const ChatInbox = () => {
           </div>
 
           {/* Logout */}
-          <button className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg hover:bg-base-200 text-error transition-colors">
+          <button 
+            onClick={() => setIsLogoutModalOpen(true)}
+            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary hover:bg-red-400/20"
+          >
             <Logout className="w-4 h-4" />
-            <span className="font-medium">Logout</span>
+            <span className="font-medium text-[#FE6262]">Logout</span>
           </button>
         </div>
       </div>
@@ -183,10 +205,12 @@ const ChatInbox = () => {
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <div className="bg-base-100 border-b border-base-300 px-6 py-4 flex items-center justify-between">
+        <div className=" px-6 py-4 flex items-center justify-between">
           {!isSidebarOpen && (
             <button onClick={() => setIsSidebarOpen(true)}>
-              <Panel className="w-5 h-5 text-base-content" />
+              <div className="w-10 h-10 bg-primary  flex items-center justify-center rounded-full">
+                <PanelLeft className="w-5 h-5 text-base-content" />
+              </div>
             </button>
           )}
           <div className="flex-1" />
@@ -245,12 +269,12 @@ const ChatInbox = () => {
         <div className="px-6 py-4">
           <div className="max-w-3xl mx-auto">
             <form onSubmit={handleSendMessage}>
-              <div className="flex items-end gap-3 bg-base-100 border border-base-300 rounded-4xl px-4 py-3 shadow-sm">
+              <div className="flex items-end gap-3 bg-base-100  rounded-4xl px-4 py-3 shadow-sm">
                 <button
                   type="button"
-                  className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-base-200 transition-colors"
+                  className="w-9 h-9 rounded-full flex items-center justify-center bg-[#9C1E1E] transition-colors"
                 >
-                  <PlusIcon className="w-4 h-4 text-base-content" />
+                  <PlusIcon className="w-4 h-4 text-white" />
                 </button>
 
                 <textarea
@@ -266,15 +290,25 @@ const ChatInbox = () => {
                 <button
                   type="submit"
                   disabled={!message.trim() || isLoading}
-                  className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-base-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-9 h-9 rounded-full flex items-center justify-center bg-[#9C1E1E] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <SendIcon className="w-4 h-4 text-base-content" />
+                  <SendIcon className="w-4 h-4 text-white" />
                 </button>
               </div>
             </form>
           </div>
         </div>
       </div>
+
+      {/* Logout Modal */}
+      <LogoutModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={() => {
+          handleLogout();
+          setIsLogoutModalOpen(false);
+        }}
+      />
     </div>
   );
 };

@@ -6,8 +6,10 @@ import google from "../../assets/icons/google.svg";
 import facebook from "../../assets/icons/facebook.svg";
 import apple from "../../assets/icons/apple.svg";
 import ThemeToggle from "../../components/common/ThemeToggle";
+import { useNavigate } from "react-router-dom";
 
 const SignIn = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -16,10 +18,11 @@ const SignIn = () => {
 
   const onSubmit = (data) => {
     console.log(data);
+    navigate("/");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative">
+    <div className="min-h-screen flex items-center justify-center p-4 relative bg-secondary">
       <div className="absolute right-4 top-5">
         <ThemeToggle></ThemeToggle>
       </div>
@@ -38,9 +41,7 @@ const SignIn = () => {
           <h2 className="text-center font-semibold text-lg mb-7">
             Artistry Coach
           </h2>
-          <h1 className="text-2xl font-extrabold text-center mb-1">
-            Sign In
-          </h1>
+          <h1 className="text-2xl font-extrabold text-center mb-1">Sign In</h1>
           <p className="text-center text-sm mb-8">
             Sign in with your account to get started
           </p>
@@ -54,13 +55,11 @@ const SignIn = () => {
                 type="email"
                 placeholder="Email"
                 {...register("email", { required: "Email is required" })}
-                className="w-full px-4 py-3 shadow-md rounded-md outline-none text-sm"
+                className="w-full px-4 py-3 bg-base-100 shadow-md rounded-md outline-none text-sm"
                 autoComplete="email"
               />
               {errors.email && (
-                <p className="text-xs mt-1">
-                  {errors.email.message}
-                </p>
+                <p className="text-xs mt-1">{errors.email.message}</p>
               )}
             </div>
             <div>
@@ -72,18 +71,16 @@ const SignIn = () => {
                 type="password"
                 placeholder="Password"
                 {...register("password", { required: "Password is required" })}
-                className="w-full px-4 py-3 shadow-md rounded-md outline-none text-sm"
+                className="w-full px-4 py-3 bg-base-100 shadow-md rounded-md outline-none text-sm"
                 autoComplete="current-password"
               />
               {errors.password && (
-                <p className="text-xs mt-1">
-                  {errors.password.message}
-                </p>
+                <p className="text-xs mt-1">{errors.password.message}</p>
               )}
             </div>
             <button
               type="submit"
-              className="w-full py-3 rounded-md font-medium hover:scale-102 transition-transform duration-300"
+              className="w-full py-3 rounded-md font-medium bg-[#9C1E1E] text-white hover:scale-102 transition-transform duration-300"
             >
               Continue
             </button>
@@ -97,37 +94,44 @@ const SignIn = () => {
           <div className="flex justify-between items-center gap-3">
             <button
               type="button"
-              className="w-full flex items-center justify-center gap-3 px-4 py-2 shadow-md rounded-md hover:shadow-lg transition-shadow duration-300"
+              className="w-full flex items-center justify-center gap-3 px-4 py-2 shadow-md rounded-md hover:shadow-lg transition-shadow duration-300 bg-base-100"
               aria-label="Sign in with Google"
             >
-              <img src={google} alt="Google logo" className="w-5 h-5 select-none pointer-events-none" />
+              <img
+                src={google}
+                alt="Google logo"
+                className="w-5 h-5 select-none pointer-events-none"
+              />
               <span className="font-medium text-sm">Google</span>
             </button>
             <button
               type="button"
-              className="w-full flex items-center justify-center gap-3 px-4 py-2 shadow-md rounded-md hover:shadow-lg transition-shadow duration-300"
+              className="w-full flex items-center justify-center gap-3 px-4 py-2 shadow-md rounded-md hover:shadow-lg transition-shadow duration-300 bg-base-100"
               aria-label="Sign in with Facebook"
             >
-              <img src={facebook} alt="Facebook logo" className="w-5 h-5 select-none pointer-events-none" />
-              <span className="font-medium text-sm">
-                Facebook
-              </span>
+              <img
+                src={facebook}
+                alt="Facebook logo"
+                className="w-5 h-5 select-none pointer-events-none"
+              />
+              <span className="font-medium text-sm">Facebook</span>
             </button>
             <button
               type="button"
-              className="w-full flex items-center justify-center gap-3 px-4 py-2 shadow-md rounded-md hover:shadow-lg transition-shadow duration-300"
+              className="w-full flex items-center justify-center gap-3 px-4 py-2 shadow-md rounded-md hover:shadow-lg transition-shadow duration-300 bg-base-100"
               aria-label="Sign in with Apple"
             >
-              <img src={apple} alt="Apple logo" className="w-5 h-5 select-none pointer-events-none" />
+              <img
+                src={apple}
+                alt="Apple logo"
+                className="w-5 h-5 select-none pointer-events-none"
+              />
               <span className="font-medium text-sm">Apple</span>
             </button>
           </div>
           <p className="text-center text-sm mt-6">
             Don&apos;t have an account yet?{" "}
-            <a
-              href="/signup"
-              className="font-semibold hover:underline"
-            >
+            <a href="/signup" className="font-semibold hover:underline">
               Sign Up
             </a>
           </p>
