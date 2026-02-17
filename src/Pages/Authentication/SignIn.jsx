@@ -7,6 +7,7 @@ import facebook from "../../assets/icons/facebook.svg";
 import apple from "../../assets/icons/apple.svg";
 import ThemeToggle from "../../components/common/ThemeToggle";
 import { useNavigate } from "react-router-dom";
+import { Dance } from "../../assets/icons/icons";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -137,11 +138,12 @@ const SignIn = () => {
           </p>
         </div>
         <div className="hidden lg:block flex-1 pt-36">
-          <img
+          <Dance className="w-full h-auto select-none pointer-events-none" />
+          {/* <img
             src={dance1}
             alt="Illustration of a dancing figure in motion"
             className="w-2/3 h-auto select-none pointer-events-none"
-          />
+          /> */}
         </div>
       </div>
     </div>

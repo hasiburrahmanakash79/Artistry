@@ -1,32 +1,55 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 const ThemeToggle = () => {
   const [theme, setTheme] = useState(
-    localStorage.getItem("app-theme") || "light",
+    localStorage.getItem("app-theme") || "Dark",
   );
 
   // Apply theme to document and save in localStorage
   const applyTheme = (t) => {
     const root = document.documentElement;
-    if (t === "system") {
+    let themeToSet;
+
+    if (t === "System") {
+      // Check current system preference
       const prefersDark = window.matchMedia(
         "(prefers-color-scheme: dark)",
       ).matches;
-      root.setAttribute("data-theme", prefersDark ? "dark" : "light");
+      themeToSet = prefersDark ? "Dark" : "Light";
     } else {
-      root.setAttribute("data-theme", t);
+      themeToSet = t; // "Light" or "Dark"
     }
+
+    root.setAttribute("data-theme", themeToSet);
     localStorage.setItem("app-theme", t);
     setTheme(t);
   };
 
+  // Initial theme application
   useEffect(() => {
     applyTheme(theme);
   }, []);
 
+  // Listen for system theme changes (only when "System" is selected)
+  useEffect(() => {
+    if (theme !== "System") return;
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const handleChange = () => {
+      applyTheme("System");
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange);
+    };
+  }, [theme]);
+
   return (
     <div className="flex gap-1 p-1 bg-base-200 rounded-lg w-full">
-      {["Light","Dark",  ].map((t) => (
+      {["Light", "Dark", "System"].map((t) => (
         <button
           key={t}
           onClick={() => applyTheme(t)}

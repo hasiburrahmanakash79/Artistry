@@ -29,6 +29,7 @@ const ChatInbox = () => {
   ]);
   const [currentChatId, setCurrentChatId] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const textareaRef = useRef(null);
   const messagesEndRef = useRef(null);
 
@@ -52,15 +53,38 @@ const ChatInbox = () => {
     }
   }, [currentChat.messages, isLoading]);
 
+  // Handle responsive sidebar behavior
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768; // Tailwind md breakpoint
+      setIsMobile(mobile);
+      if (mobile) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    handleResize(); // Initial check
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const handleNewChat = () => {
     const newId = Date.now();
     const newChat = { id: newId, title: "New Chat", messages: [] };
     setChats([newChat, ...chats]); // Add new chat at the top
     setCurrentChatId(newId);
+    // Close sidebar on mobile after new chat
+    if (isMobile) {
+      setIsSidebarOpen(false);
+    }
   };
 
   const handleSelectChat = (id) => {
     setCurrentChatId(id);
+    // Close sidebar on mobile after selecting a chat
+    if (isMobile) {
+      setIsSidebarOpen(false);
+    }
   };
 
   const handleSendMessage = (e) => {
@@ -132,12 +156,18 @@ const ChatInbox = () => {
   };
 
   return (
-    <div className="flex h-screen bg-base-200">
+    <div className="flex h-screen bg-base-200 overflow-hidden">
       {/* Sidebar */}
       <div
-        className={`${
-          isSidebarOpen ? "w-64" : "w-0"
-        } bg-base-100  flex flex-col  overflow-hidden`}
+        className={`
+          bg-base-100 flex flex-col overflow-hidden rounded-r-xl
+          fixed md:static inset-y-0 left-0 z-50 md:z-auto
+          transition-all duration-300 ease-in-out
+          w-64
+          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          md:translate-x-0
+          ${isSidebarOpen ? "md:w-64" : "md:w-0"}
+        `}
       >
         {/* Logo */}
         <div className="p-4 flex items-center justify-between">
@@ -162,13 +192,13 @@ const ChatInbox = () => {
             className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-base-300 text-base-content "
           >
             <Edit className="w-4 h-4" />
-            <span className="font-medium">New Chat</span>
+            <span className="font-medium text-nowrap">New Chat</span>
           </button>
         </div>
 
         {/* Chat History */}
         <div className="flex-1 overflow-y-auto px-3">
-          <h3 className="text-xs font-semibold mb-2 px-1 text-base-content opacity-60">
+          <h3 className="text-xs font-semibold mb-2 px-1 text-base-content opacity-60 text-nowrap">
             Recent Chats
           </h3>
           <div className="space-y-1">
@@ -176,7 +206,7 @@ const ChatInbox = () => {
               <button
                 key={chat.id}
                 onClick={() => handleSelectChat(chat.id)}
-                className={`w-full text-left px-3 py-2.5 rounded-lg text-sm hover:bg-base-300 text-base-content`}
+                className={`w-full text-left px-3 py-2.5 rounded-lg text-sm hover:bg-base-300 text-nowrap text-base-content transition-colors`}
               >
                 {chat.title}
               </button>
@@ -194,7 +224,7 @@ const ChatInbox = () => {
           {/* Logout */}
           <button 
             onClick={() => setIsLogoutModalOpen(true)}
-            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary hover:bg-red-400/20"
+            className="w-full flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary hover:bg-red-400/20"
           >
             <Logout className="w-4 h-4" />
             <span className="font-medium text-[#FE6262]">Logout</span>
@@ -202,13 +232,21 @@ const ChatInbox = () => {
         </div>
       </div>
 
+      {/* Mobile Overlay */}
+      {isSidebarOpen && isMobile && (
+        <div
+          className="fixed inset-0 bg-black/60 z-40 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
         <div className=" px-6 py-4 flex items-center justify-between">
           {!isSidebarOpen && (
             <button onClick={() => setIsSidebarOpen(true)}>
-              <div className="w-10 h-10 bg-primary  flex items-center justify-center rounded-full">
+              <div className="w-10 h-10 bg-primary flex items-center justify-center rounded-full">
                 <PanelLeft className="w-5 h-5 text-base-content" />
               </div>
             </button>
@@ -234,10 +272,10 @@ const ChatInbox = () => {
                 }`}
               >
                 <div
-                  className={`max-w-2xl px-6 py-3 rounded-2xl shadow-sm ${
+                  className={`md:max-w-xl max-w-72 px-6 py-3  ${
                     msg.role === "user"
-                      ? "bg-base-100 rounded-tr-sm"
-                      : "bg-base-100 rounded-tl-sm"
+                      ? "bg-base-100 rounded-tr-sm rounded-2xl shadow-sm"
+                      : "rounded-tl-sm"
                   }`}
                 >
                   <p className="text-sm whitespace-pre-wrap leading-relaxed text-base-content">
