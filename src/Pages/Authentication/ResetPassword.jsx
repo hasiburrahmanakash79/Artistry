@@ -1,35 +1,49 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import Logo from "../../assets/logo/logo";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import apiClient from "../../lib/api-client";
 import { Dance, Danse2 } from "../../assets/icons/icons";
-// Import your apiClient if needed for actual registration
-// import apiClient from "../../lib/api-client";
 
-const SignUp = () => {
+const ResetPassword = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const user_id = location.state?.user_id || "";
+  const secret_key = location.state?.secret_key || "";
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
   } = useForm();
 
   const [apiError, setApiError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    if (data.password !== data.confirmPassword) {
+      setApiError("Passwords do not match.");
+      return;
+    }
     setApiError(null);
-    // Mock API call - replace with actual apiClient.post("/auth/signup", data)
-    console.log(data);
-    // On success, navigate to home or signin
-    navigate("/");
+    try {
+      await apiClient.post("/auth/reset-password", {
+        user_id: user_id,
+        secret_key: secret_key,
+        new_password: data.password,
+        confirm_password: data.confirmPassword,
+      });
+      // On success, navigate to login page
+      navigate("/signin");
+    } catch (error) {
+      console.error("Reset Password Error:", error);
+      const errorMessage =
+        error.response?.data?.message ||
+        "Password reset failed. Please try again.";
+      setApiError(errorMessage);
+    }
   };
-
-  // Watch password for confirm validation
-  const password = watch("password");
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative bg-secondary">
@@ -41,18 +55,14 @@ const SignUp = () => {
 
         {/* Center form */}
         <div className="w-full max-w-md">
-          <div className="flex justify-center mb-3">
-            <Logo />
-          </div>
+          
 
-          <h2 className="text-center font-semibold text-lg mb-7">
-            Artistry Coach
-          </h2>
-
-          <h1 className="text-2xl font-extrabold text-center mb-1">Sign Up</h1>
+          <h1 className="text-2xl font-extrabold text-center mb-1">
+            Reset Password
+          </h1>
 
           <p className="text-center text-sm mb-8">
-            Create a new account to get started
+            Enter your new password below.
           </p>
 
           {/* Display API error if any */}
@@ -62,30 +72,13 @@ const SignUp = () => {
             </p>
           )}
 
+          {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                placeholder="Email"
-                {...register("email", { required: "Email is required" })}
-                className="w-full px-4 py-3 bg-base-100 shadow-md rounded-md outline-none text-sm"
-                autoComplete="email"
-              />
-              {errors.email && (
-                <p className="text-[#9C1E1E] text-xs mt-1">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
             <div className="relative">
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="Password"
+                placeholder="New Password"
                 {...register("password", {
                   required: "Password is required",
                   minLength: {
@@ -116,8 +109,6 @@ const SignUp = () => {
                 placeholder="Confirm Password"
                 {...register("confirmPassword", {
                   required: "Confirm Password is required",
-                  validate: (value) =>
-                    value === password || "Passwords do not match",
                 })}
                 className="w-full px-4 py-3 bg-base-100 shadow-md rounded-md outline-none text-sm pr-10"
                 autoComplete="new-password"
@@ -140,17 +131,16 @@ const SignUp = () => {
               type="submit"
               className="w-full py-3 rounded-md font-medium bg-[#9C1E1E] text-white hover:scale-102 transition-transform duration-300"
             >
-              Sign Up
+              Reset Password
             </button>
           </form>
 
           <p className="text-center text-sm mt-6">
-            Already have an account?{" "}
             <Link
               to="/signin"
-              className="font-semibold hover:underline text-[#9C1E1E]"
+              className="text-[#9C1E1E] hover:underline font-medium"
             >
-              Sign In
+              Back to Sign In
             </Link>
           </p>
         </div>
@@ -164,4 +154,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default ResetPassword;

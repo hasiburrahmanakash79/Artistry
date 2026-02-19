@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 const ThemeToggle = () => {
   const [theme, setTheme] = useState(
-    localStorage.getItem("app-theme") || "Dark",
+    localStorage.getItem("app-theme") || "System",
   );
 
   // Apply theme to document and save in localStorage
